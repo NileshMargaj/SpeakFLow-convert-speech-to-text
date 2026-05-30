@@ -1,0 +1,28 @@
+/* Adds an invisible (still scrollable) vertical scrollbar.
+   Intended for internal scroll containers like landing/dashboard.
+*/
+
+/* Firefox */
+.invisible-vertical-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+/* WebKit */
+.invisible-vertical-scrollbar::-webkit-scrollbar {
+  width: 1px; /* keep it scrollable */
+  height: 1px;
+}
+.invisible-vertical-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.9); /* indigo-500 */
+}
+.invisible-vertical-scrollbar::-webkit-scrollbar-track {
+  background: rgba(226, 232, 240, 0.8); /* slate-200 */
+}
+
+
+.invisible-vertical-scrollbar {
+  scrollbar-gutter: stable;
+}
+
+

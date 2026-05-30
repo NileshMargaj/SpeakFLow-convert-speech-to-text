@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import speakflow_logo from '../assets/speakFlow_logo.png';
 import { LayoutDashboard, History, Save, UserPlus, LogIn, LogOut, Menu, X } from 'lucide-react';
+import './InvisibleScrollbar.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -201,7 +202,7 @@ export default function RootLayout({ children }) {
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col overflow-hidden bg-slate-100 w-full">
         {/* Mobile top spacing */}
-        <section className="flex-1 overflow-y-auto p-8 md:pt-8 pt-24">
+        <section className="flex-1 overflow-y-auto p-8 md:pt-8 pt-24 scrollbar-gutter invisible-vertical-scrollbar">
           <div className="max-w-6xl mx-auto">{children}</div>
         </section>
       </main>

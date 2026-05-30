@@ -32,7 +32,7 @@ const Transcription = ({ text = '', transcriptId, isLoading, statusMessage, onDo
         </div>
 
         {/* Footer Section */}
-        <div className="mt-3 flex items-center justify-between border-t border-slate-50 pt-3">
+        <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-slate-50 pt-3">
           <div className="flex items-center gap-2 text-slate-400">
             <FileText size={16} />
             <span className="text-sm font-medium">{characterCount} characters</span>
@@ -41,7 +41,7 @@ const Transcription = ({ text = '', transcriptId, isLoading, statusMessage, onDo
           <button
             onClick={() => onDownload?.(transcriptId)}
             disabled={!transcriptId}
-            className="flex items-center gap-2 rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-bold text-indigo-600 shadow-sm transition-all hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex items-center justify-center gap-2 rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-bold text-indigo-600 shadow-sm transition-all hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-50 w-full sm:w-auto"
           >
             <Download size={16} />
             Download PDF
