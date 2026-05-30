@@ -1,5 +1,5 @@
 import express from "express";
-import { isUserAuthenticated } from "../middleware/auth.Middleware.js";
+import { isUserAuthenticated } from "../middleware/auth.middleware.js";
 import {
   transcribeUploadedAudioById,
   transcribeRecordedAudioById,
