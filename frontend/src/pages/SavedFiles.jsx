@@ -108,7 +108,7 @@ export default function SavedFiles() {
         </div>
 
         <div className="flex-1 min-h-0">
-          <div className="flex h-full min-h-0 items-stretch bg-gray-50">
+        <div className="flex h-full min-h-0 items-stretch bg-gray-50 overflow-hidden sm:px-2 px-0">
             <div className="flex h-full min-h-0 w-full flex-col rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
               <div className="mb-2 flex items-center justify-between px-1">
                 <h2 className="text-base font-bold text-slate-800">Your Audio</h2>
@@ -134,7 +134,7 @@ export default function SavedFiles() {
                   files.map((item) => (
                     <div
                       key={`${item.audioType}-${item.audioId}`}
-                      className="group flex items-center justify-between rounded-xl px-2 py-2.5 transition-colors hover:bg-slate-50/50"
+                      className="group flex items-center justify-between rounded-xl px-2 py-2.5 transition-colors hover:bg-slate-50/50 flex-col sm:flex-row"
                     >
                       <div className="flex min-w-0 items-center gap-3">
                         <div
@@ -148,26 +148,26 @@ export default function SavedFiles() {
                         </div>
 
                         <div className="min-w-0">
-                          <h3 className="truncate text-sm font-bold text-slate-800 group-hover:text-indigo-600">
+                          <h3 className="truncate text-xs sm:text-sm font-bold text-slate-800 group-hover:text-indigo-600" title={item.audioName || ''}>
                             {item.audioName}
                           </h3>
-                          <p className="mt-0.5 text-xs text-slate-400">
+                          <p className="mt-0.5 text-[10px] sm:text-xs text-slate-400">
                             {item.audioType} • {formatTimeAgo(item.createdAt)}
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex shrink-0 items-center gap-3">
+                      <div className="flex shrink-0 flex-row items-center gap-3 sm:gap-3">
                         <audio
                           controls
                           src={item.imagekitUrl}
-                          className="w-56 max-w-[180px]"
+                          className="w-56 max-w-[180px] sm:w-56"
                         />
 
                         <button
                           type="button"
                           onClick={() => handleDownload(item)}
-                          className="rounded-lg p-1 text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-600"
+                          className="rounded-lg p-2 text-slate-600 bg-white/80 hover:bg-slate-100 shadow-sm transition-all flex items-center justify-center"
                           aria-label="Download audio"
                         >
                           <Download size={16} />
