@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { LogIn, Mail, Lock, ArrowRight } from 'lucide-react';
-import PasswordField from '../components/PasswordField.jsx';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Mail, ArrowRight } from "lucide-react";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const InputField = ({ label, type, placeholder, icon: Icon, name, value, onChange, autoComplete }) => (
   <div className="mb-3">
@@ -26,14 +25,13 @@ const InputField = ({ label, type, placeholder, icon: Icon, name, value, onChang
   </div>
 );
 
-
-const Login = () => {
+export default function ForgotPassword() {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
   });
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (event) => {
@@ -46,26 +44,26 @@ const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setMessage('');
+    setMessage("");
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
-        method: 'POST',
+      const response = await fetch(`${API_URL}/api/auth/forgot-password`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        credentials: 'include',
+        credentials: "include",
         body: JSON.stringify(formData),
       });
 
       const data = await response.json();
-
       if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Login failed');
+        throw new Error(data.message || "Failed to send OTP");
       }
 
-      navigate('/');
+      // Move to OTP verify screen. We'll pass email via navigation state.
+      navigate("/verify-otp", { state: { email: formData.email } });
     } catch (error) {
       setMessage(error.message);
     } finally {
@@ -76,42 +74,28 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 font-sans">
       <div className="max-w-[440px] w-full bg-white rounded-[32px] shadow-lg border border-gray-100 p-10">
-        
-        {/* Logo & Header */}
         <div className="text-center mb-4">
           <div className="inline-flex items-center justify-center p-3 bg-indigo-500 rounded-2xl text-white mb-4 shadow-lg shadow-indigo-100">
-            <LogIn size={28} />
+            <Mail size={28} />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Sign In</h2>
+          <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Reset Password</h2>
+          <p className="text-sm text-gray-500 mt-1">Enter your email to receive an OTP.</p>
         </div>
 
-        {/* Login Form */}
         <form onSubmit={handleSubmit}>
           <InputField
             label="Email Address"
             name="email"
             type="email"
-            placeholder="Enter email address"
+            placeholder="Enter your email"
             icon={Mail}
             value={formData.email}
             onChange={handleChange}
             autoComplete="email"
           />
-          <PasswordField
-            label="Password"
-            name="password"
-            placeholder="Enter password"
-            icon={Lock}
-            value={formData.password}
-            onChange={handleChange}
-            autoComplete="current-password"
-          />
-
 
           {message && (
-            <p className="mb-3 rounded-xl bg-red-50 px-3 py-2 text-sm font-medium text-red-600">
-              {message}
-            </p>
+            <p className="mb-3 rounded-xl bg-red-50 px-3 py-2 text-sm font-medium text-red-600">{message}</p>
           )}
 
           <button
@@ -119,31 +103,23 @@ const Login = () => {
             disabled={isSubmitting}
             className="w-full bg-indigo-500 hover:bg-indigo-600 disabled:bg-indigo-300 disabled:cursor-not-allowed text-white py-2 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-indigo-100 active:scale-[0.98]"
           >
-            {isSubmitting ? 'Signing in...' : 'Sign In'}
+            {isSubmitting ? "Sending OTP..." : "Send OTP"}
             <ArrowRight size={18} />
           </button>
         </form>
 
-        {/* Forgot password */}
-        <div className="text-center mt-3">
+        <p className="text-center text-sm text-gray-500 mt-4 font-medium">
+          Remembered your password?{" "}
           <button
             type="button"
-            className="text-sm text-indigo-500 font-bold hover:underline"
-            onClick={() => navigate('/forgot-password')}
+            className="text-indigo-500 font-bold hover:underline"
+            onClick={() => navigate("/login")}
           >
-            Forgot password?
+            Back to Login
           </button>
-        </div>
-
-        {/* Footer */}
-        <p className="text-center text-sm text-gray-500 mt-4 font-medium">
-          Don't have an account?{' '}
-          <Link to="/register" className="text-indigo-500 font-bold hover:underline">Create Account</Link>
         </p>
-
       </div>
     </div>
   );
-};
+}
 
-export default Login;

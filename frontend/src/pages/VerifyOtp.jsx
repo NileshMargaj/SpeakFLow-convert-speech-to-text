@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { LogIn, Mail, Lock, ArrowRight } from 'lucide-react';
-import PasswordField from '../components/PasswordField.jsx';
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Lock, ArrowRight } from "lucide-react";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const InputField = ({ label, type, placeholder, icon: Icon, name, value, onChange, autoComplete }) => (
   <div className="mb-3">
@@ -26,15 +25,25 @@ const InputField = ({ label, type, placeholder, icon: Icon, name, value, onChang
   </div>
 );
 
-
-const Login = () => {
+export default function VerifyOtp() {
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const initialEmail = location?.state?.email || "";
+
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: initialEmail,
+    otp: "",
   });
-  const [message, setMessage] = useState('');
+
+  const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!formData.email && initialEmail) {
+      setFormData((p) => ({ ...p, email: initialEmail }));
+    }
+  }, [initialEmail]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -46,26 +55,25 @@ const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setMessage('');
+    setMessage("");
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
-        method: 'POST',
+      const response = await fetch(`${API_URL}/api/auth/verify-otp`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        credentials: 'include',
+        credentials: "include",
         body: JSON.stringify(formData),
       });
 
       const data = await response.json();
-
       if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Login failed');
+        throw new Error(data.message || "OTP verification failed");
       }
 
-      navigate('/');
+      navigate("/reset-password", { state: { email: formData.email } });
     } catch (error) {
       setMessage(error.message);
     } finally {
@@ -76,74 +84,63 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 font-sans">
       <div className="max-w-[440px] w-full bg-white rounded-[32px] shadow-lg border border-gray-100 p-10">
-        
-        {/* Logo & Header */}
         <div className="text-center mb-4">
           <div className="inline-flex items-center justify-center p-3 bg-indigo-500 rounded-2xl text-white mb-4 shadow-lg shadow-indigo-100">
-            <LogIn size={28} />
+            <Lock size={28} />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Sign In</h2>
+          <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Verify OTP</h2>
+          <p className="text-sm text-gray-500 mt-1">Enter the OTP sent to your email.</p>
         </div>
 
-        {/* Login Form */}
         <form onSubmit={handleSubmit}>
           <InputField
-            label="Email Address"
+            label="Email"
             name="email"
             type="email"
-            placeholder="Enter email address"
-            icon={Mail}
+            placeholder="Enter your email"
+            icon={Lock}
             value={formData.email}
             onChange={handleChange}
             autoComplete="email"
           />
-          <PasswordField
-            label="Password"
-            name="password"
-            placeholder="Enter password"
+
+          <InputField
+            label="OTP"
+            name="otp"
+            type="text"
+            placeholder="6-digit OTP"
             icon={Lock}
-            value={formData.password}
+            value={formData.otp}
             onChange={handleChange}
-            autoComplete="current-password"
+            autoComplete="one-time-code"
           />
 
-
           {message && (
-            <p className="mb-3 rounded-xl bg-red-50 px-3 py-2 text-sm font-medium text-red-600">
-              {message}
-            </p>
+            <p className="mb-3 rounded-xl bg-red-50 px-3 py-2 text-sm font-medium text-red-600">{message}</p>
           )}
 
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !formData.email}
             className="w-full bg-indigo-500 hover:bg-indigo-600 disabled:bg-indigo-300 disabled:cursor-not-allowed text-white py-2 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-indigo-100 active:scale-[0.98]"
           >
-            {isSubmitting ? 'Signing in...' : 'Sign In'}
+            {isSubmitting ? "Verifying..." : "Verify"}
             <ArrowRight size={18} />
           </button>
         </form>
 
-        {/* Forgot password */}
-        <div className="text-center mt-3">
+        <p className="text-center text-sm text-gray-500 mt-4 font-medium">
+          Go back to OTP request?{" "}
           <button
             type="button"
-            className="text-sm text-indigo-500 font-bold hover:underline"
-            onClick={() => navigate('/forgot-password')}
+            className="text-indigo-500 font-bold hover:underline"
+            onClick={() => navigate("/forgot-password")}
           >
-            Forgot password?
+            Resend / Change Email
           </button>
-        </div>
-
-        {/* Footer */}
-        <p className="text-center text-sm text-gray-500 mt-4 font-medium">
-          Don't have an account?{' '}
-          <Link to="/register" className="text-indigo-500 font-bold hover:underline">Create Account</Link>
         </p>
-
       </div>
     </div>
   );
-};
+}
 
-export default Login;
